@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F9FAFB",
   },
   tableCell: {
-    flex: 1,
+    width: "20%",
     padding: 8,
     fontSize: 10,
   },
@@ -53,8 +53,9 @@ const styles = StyleSheet.create({
     fontSize: 10,
     backgroundColor: "#E5E7EB",
     color: "#374151",
-    textAlign: "center" as const,
-    width: "fit-content",
+    textAlign: "center",
+    width: "auto",
+    marginBottom: 4,
   },
   activeBadge: {
     backgroundColor: "#D1FAE5",
@@ -64,11 +65,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEF2FF",
     color: "#4F46E5",
     marginRight: 4,
-    marginBottom: 4,
   },
   appsContainer: {
-    flexDirection: "row" as const,
-    flexWrap: "wrap" as const,
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
 });
 
@@ -104,7 +104,7 @@ const VPSReport = ({ data }: VPSReportProps) => (
               <Text style={styles.specs}>RAM: {vps.ram}</Text>
               <Text style={styles.specs}>Storage: {vps.storage}</Text>
             </View>
-            <View style={[styles.tableCell, styles.appsContainer]}>
+            <View style={styles.tableCell}>
               {vps.applications.map((app, i) => (
                 <Text key={i} style={[styles.badge, styles.appBadge]}>
                   {app}
@@ -116,7 +116,6 @@ const VPSReport = ({ data }: VPSReportProps) => (
               style={[
                 styles.badge,
                 vps.status === "active" && styles.activeBadge,
-                { alignSelf: "flex-start" },
               ]}
             >
               {vps.status === "active" ? "Aktif" : "Non-aktif"}
