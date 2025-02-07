@@ -11,12 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Server, Database, AppWindow } from "lucide-react";
+import { Search, Server, Database, AppWindow, FileDown } from "lucide-react";
 import { VPSDialog } from "@/components/VPSDialog";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import VPSReport from "@/components/VPSReport";
 
-interface VPSData {
+export interface VPSData {
   id: string;
   name: string;
   cpu: string;
@@ -66,7 +68,20 @@ const Index = () => {
           <h1 className="text-2xl font-semibold text-gray-900">
             Dashboard Pendataan VPS
           </h1>
-          <VPSDialog onSuccess={refetch} />
+          <div className="flex gap-4">
+            <PDFDownloadLink
+              document={<VPSReport data={vpsData} />}
+              fileName="laporan-vps.pdf"
+            >
+              {({ loading }) => (
+                <Button variant="outline" disabled={loading}>
+                  <FileDown className="h-4 w-4 mr-2" />
+                  {loading ? "Generating PDF..." : "Export PDF"}
+                </Button>
+              )}
+            </PDFDownloadLink>
+            <VPSDialog onSuccess={refetch} />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
