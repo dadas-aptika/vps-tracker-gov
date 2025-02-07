@@ -132,6 +132,7 @@ const Index = () => {
                   <TableHead>Aplikasi</TableHead>
                   <TableHead>Unit/Instansi</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="w-[100px]">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -173,6 +174,13 @@ const Index = () => {
                       >
                         {vps.status === "active" ? "Aktif" : "Non-aktif"}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <VPSDialog
+                        mode="edit"
+                        data={vps}
+                        onSuccess={refetch}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
