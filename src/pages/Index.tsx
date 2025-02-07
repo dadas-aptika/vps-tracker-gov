@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Plus, Server, Database, Apps } from "lucide-react";
+import { Search, Plus, Server, Database, AppWindow } from "lucide-react";
 
 interface VPSData {
   id: number;
@@ -132,7 +132,7 @@ const Index = () => {
                   {totalApps}
                 </p>
               </div>
-              <Apps className="h-8 w-8 text-primary" />
+              <AppWindow className="h-8 w-8 text-primary" />
             </div>
           </div>
         </div>
@@ -214,3 +214,4 @@ const Index = () => {
 };
 
 export default Index;
+
