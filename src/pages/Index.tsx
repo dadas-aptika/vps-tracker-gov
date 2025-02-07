@@ -11,64 +11,39 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Plus, Server, Database, AppWindow } from "lucide-react";
+import { Search, Server, Database, AppWindow } from "lucide-react";
+import { VPSDialog } from "@/components/VPSDialog";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface VPSData {
-  id: number;
+  id: string;
   name: string;
-  specs: {
-    cpu: string;
-    ram: string;
-    storage: string;
-  };
+  cpu: string;
+  ram: string;
+  storage: string;
   applications: string[];
   unit: string;
   status: "active" | "inactive";
 }
 
-const dummyData: VPSData[] = [
-  {
-    id: 1,
-    name: "VPS-GOV-01",
-    specs: {
-      cpu: "4 Core",
-      ram: "8 GB",
-      storage: "100 GB SSD",
-    },
-    applications: ["E-Office", "SIPD"],
-    unit: "Sekretariat Daerah",
-    status: "active",
-  },
-  {
-    id: 2,
-    name: "VPS-GOV-02",
-    specs: {
-      cpu: "8 Core",
-      ram: "16 GB",
-      storage: "200 GB SSD",
-    },
-    applications: ["E-Planning", "E-Budgeting"],
-    unit: "BAPPEDA",
-    status: "active",
-  },
-  {
-    id: 3,
-    name: "VPS-GOV-03",
-    specs: {
-      cpu: "2 Core",
-      ram: "4 GB",
-      storage: "50 GB SSD",
-    },
-    applications: ["Website Dinas"],
-    unit: "Dinas Komunikasi dan Informatika",
-    status: "inactive",
-  },
-];
-
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredData = dummyData.filter(
+  const { data: vpsData = [], refetch } = useQuery({
+    queryKey: ["vps"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("vps")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data as VPSData[];
+    },
+  });
+
+  const filteredData = vpsData.filter(
     (vps) =>
       vps.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       vps.unit.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,9 +52,9 @@ const Index = () => {
       )
   );
 
-  const totalVPS = dummyData.length;
-  const activeVPS = dummyData.filter((vps) => vps.status === "active").length;
-  const totalApps = dummyData.reduce(
+  const totalVPS = vpsData.length;
+  const activeVPS = vpsData.filter((vps) => vps.status === "active").length;
+  const totalApps = vpsData.reduce(
     (sum, vps) => sum + vps.applications.length,
     0
   );
@@ -91,10 +66,7 @@ const Index = () => {
           <h1 className="text-2xl font-semibold text-gray-900">
             Dashboard Pendataan VPS
           </h1>
-          <Button className="btn-primary flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Tambah VPS
-          </Button>
+          <VPSDialog onSuccess={refetch} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -171,9 +143,9 @@ const Index = () => {
                     <TableCell className="font-medium">{vps.name}</TableCell>
                     <TableCell>
                       <div className="space-y-1">
-                        <p className="text-sm">CPU: {vps.specs.cpu}</p>
-                        <p className="text-sm">RAM: {vps.specs.ram}</p>
-                        <p className="text-sm">Storage: {vps.specs.storage}</p>
+                        <p className="text-sm">CPU: {vps.cpu}</p>
+                        <p className="text-sm">RAM: {vps.ram}</p>
+                        <p className="text-sm">Storage: {vps.storage}</p>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -214,4 +186,3 @@ const Index = () => {
 };
 
 export default Index;
-
