@@ -60,10 +60,18 @@ export function VPSDialog({ onSuccess }: { onSuccess: () => void }) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const { error } = await supabase.from("vps").insert({
-        ...values,
-        applications: values.applications.split(",").map((app) => app.trim()),
-      });
+      // First, convert the applications string to an array
+      const formattedValues = {
+        name: values.name,
+        cpu: values.cpu,
+        ram: values.ram,
+        storage: values.storage,
+        applications: values.applications.split(",").map(app => app.trim()),
+        unit: values.unit,
+        status: values.status
+      };
+
+      const { error } = await supabase.from("vps").insert(formattedValues);
 
       if (error) throw error;
 
