@@ -1,3 +1,4 @@
+
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { VPSData } from "@/types/vps";
 
@@ -77,7 +78,7 @@ interface VPSReportProps {
 
 const VPSReport = ({ data }: VPSReportProps) => (
   <Document>
-    <Page size="A4" style={styles.page}>
+    <Page size="A4" orientation="landscape" style={styles.page}>
       <View style={styles.header}>
         <Text style={styles.title}>Laporan Data VPS</Text>
         <Text style={styles.subtitle}>
