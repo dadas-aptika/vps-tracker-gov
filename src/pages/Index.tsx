@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import VPSReport from "@/components/VPSReport";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export interface VPSData {
   id: string;
@@ -28,8 +37,11 @@ export interface VPSData {
   status: "active" | "inactive";
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: vpsData = [], refetch } = useQuery({
     queryKey: ["vps"],
@@ -51,6 +63,13 @@ const Index = () => {
       vps.applications.some((app) =>
         app.toLowerCase().includes(searchTerm.toLowerCase())
       )
+  );
+
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedData = filteredData.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
   );
 
   const totalVPS = vpsData.length;
@@ -150,7 +169,7 @@ const Index = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((vps) => (
+                {paginatedData.map((vps) => (
                   <TableRow
                     key={vps.id}
                     className="hover:bg-gray-50 transition-colors"
@@ -198,6 +217,43 @@ const Index = () => {
                 ))}
               </TableBody>
             </Table>
+
+            {totalPages > 1 && (
+              <div className="mt-4 flex justify-center">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: totalPages }).map((_, index) => (
+                      <PaginationItem key={index + 1}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(index + 1)}
+                          isActive={currentPage === index + 1}
+                        >
+                          {index + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, totalPages)
+                          )
+                        }
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -206,3 +262,4 @@ const Index = () => {
 };
 
 export default Index;
+
