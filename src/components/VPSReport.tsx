@@ -1,6 +1,5 @@
-
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
-import { VPSData } from "@/pages/Index";
+import { VPSData } from "@/types/vps";
 
 const styles = StyleSheet.create({
   page: {
